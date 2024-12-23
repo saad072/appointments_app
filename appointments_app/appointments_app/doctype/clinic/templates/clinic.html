@@ -1,0 +1,107 @@
+{% extends "templates/web.html" %}
+
+{% block page_content %}
+<div class="clinic-container">
+    <header class="clinic-header">
+        <h1 class="clinic-title">{{ title }}</h1>
+    </header>
+
+    <div class="clinic-details">
+        <section class="clinic-info">
+            <h2 class="section-title">Clinic Details</h2>
+            <p><strong>Address:</strong> {{ doc.address }}</p>
+            <p><strong>Contact:</strong> {{ doc.contact }}</p>
+        </section>
+
+        <section class="doctor-info">
+            <h2 class="section-title">Doctor</h2>
+            {% set doctor = frappe.get_doc("Doctor", doc.dotcor) %}
+            <p><strong>Name:</strong> {{ doctor.full_name }}</p>
+            <p><strong>Speciality:</strong> {{ doctor.speciality }}</p>
+        </section>
+
+        <section class="clinic-timings">
+            <h2 class="section-title">Timings</h2>
+            {% set shifts = frappe.get_list("Schedule Shift", filters={"clinic": doc.name}, fields=["title"]) %}
+            {% if shifts %}
+                <ul class="timings-list">
+                    {% for shift in shifts %}
+                        <li class="timing-item">{{ shift.title }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No timings available.</p>
+            {% endif %}
+        </section>
+
+        <div class="appointment-btn-container">
+            <a href="/book-appointment/new?clinic={{ doc.name }}" target="_blank" class="btn btn-primary">Book Appointment</a>
+        </div>
+    </div>
+</div>
+
+<style>
+    .clinic-container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgb(0, 0, 0);
+    }
+
+    .clinic-header {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    .clinic-title {
+        font-size: 2rem;
+        color: #000000;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        color: #000000;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #00000062;
+        padding-bottom: 5px;
+    }
+
+    .clinic-info, .doctor-info, .clinic-timings {
+        margin-bottom: 20px;
+    }
+
+    .timings-list {
+        list-style-type: none;
+        padding: 0;
+    }
+
+    .timing-item {
+        background-color: #ecf0f1;
+        margin: 5px 0;
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    .appointment-btn-container {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .btn {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 1rem;
+        color: #fff;
+        background-color: #3498db;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #393f44b9;
+    }
+</style>
+{% endblock %}
